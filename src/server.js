@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import pino from 'pino-http';
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(helmet());
@@ -26,10 +26,7 @@ app.use(
   }),
 );
 
-app.use((req, res, next) => {
-  console.log(`Time: ${new Date().toLocaleString()}`);
-  next();
-});
+
 
 
 app.get('/notes', (req, res) => {
@@ -40,7 +37,7 @@ app.get('/notes', (req, res) => {
 
 app.get('/notes/:noteId', (req, res) => {
   res.status(200).json({
-    message: `'Retrieved note with ID: ${req.params.noteId}'`,
+    message: `Retrieved note with ID: ${req.params.noteId}`,
   });
 });
 
