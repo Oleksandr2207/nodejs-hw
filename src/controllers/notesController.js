@@ -21,11 +21,10 @@ export const getAllNotes = async (req, res) => {
     filter.$text = { $search: search };
   }
 
-  const totalNotes = await Note.countDocuments(filter);
-
-  const notes = await Note.find(filter)
-    .skip(skip)
-    .limit(perPage);
+  const [totalNotes, notes] = await Promise.all([
+    Note.countDocuments(filter),
+    Note.find(filter).skip(skip).limit(perPage)
+  ]);
 
   const totalPages = Math.ceil(totalNotes / perPage);
 
@@ -38,12 +37,14 @@ export const getAllNotes = async (req, res) => {
   });
 };
 
+
+
 export async function getNoteById(req, res) {
   const { noteId } = req.params;
   const note = await Note.findById(noteId);
 
   if (!note) {
-    throw createHttpError(404, 'Student not found!');
+    throw createHttpError(404, 'Note not found');
   }
 
   res.status(200).json(note);
@@ -62,7 +63,7 @@ export async function deleteNote(req, res) {
   });
 
   if (!note) {
-    throw createHttpError(404, "Student not found");
+    throw createHttpError(404, "Note not found");
   }
 
   res.status(200).json(note);
@@ -78,7 +79,7 @@ export const updateNote = async (req, res) => {
   );
 
   if (!note) {
-	throw createHttpError(404, 'Student not found');
+	throw createHttpError(404, 'Note not found');
   }
 
   res.status(200).json(note);
